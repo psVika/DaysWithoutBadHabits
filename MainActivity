@@ -1,0 +1,30 @@
+age com.example.dayswithoutbadhabits
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val textView = findViewById<TextView>(R.id.mainTextView)
+
+        val resetButton = findViewById<Button>(R.id.resetButton)
+        val sharedPref = getSharedPreferences("main", Context.MODE_PRIVATE)
+        val time = sharedPref.getLong("time", -1)
+        if(time == -1L) {  //если ничего не было сохранено
+            sharedPref.edit().putLong("time", System.currentTimeMillis()).apply()//то сохраняем текущее время в sharedPref
+            textView.setText("0") //и будет отображаться 0
+        } else {
+            val diff = System.currentTimeMillis() - time)/1000 //получаем в миллисекундах. деля на 1000 получаем секунды
+            val days = diff/(24*3600)
+            textView.setText(days.toString())
+        }
+        resetButton.setOnClickListener {
+            sharedPref.edit().putLong("time", System.currentTimeMillis()).apply()
+            textView.setText("0")
+        }
+        }
+    }
+}
